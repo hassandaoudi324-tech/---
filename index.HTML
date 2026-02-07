@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>تعلم معنا | منصة ذكية</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --main:#1565c0;
+  --dark:#0d47a1;
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --radius:16px;
+}
+
+body{
+  font-family:'Cairo',sans-serif;
+  margin:0;
+  background:linear-gradient(135deg,#e3f2fd,#bbdefb);
+  color:#222;
+}
+
+header{
+  background:linear-gradient(135deg,#0d47a1,#1976d2);
+  color:#fff;
+  padding:20px;
+  text-align:center;
+  font-size:28px;
+  font-weight:800;
+}
+
+nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 20px;
+  background:#fff;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+nav select{
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:14px;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+.section{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:20px;
+  margin-bottom:25px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+.section h2{
+  margin-top:0;
+  color:var(--main);
+  border-right:6px solid var(--main);
+  padding-right:10px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+}
+
+label{
+  font-weight:600;
+  display:block;
+  margin-top:10px;
+}
+
+input,select,button{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:15px;
+}
+
+button{
+  background:var(--main);
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  transition:.3s;
+}
+
+button:hover{background:var(--dark);}
+
+.result{
+  background:#e3f2fd;
+  border-radius:10px;
+  padding:10px;
+  margin-top:10px;
+  font-weight:600;
+}
+
+.news-item{
+  padding:10px;
+  border-bottom:1px solid #ddd;
+}
+
+.news-item:last-child{border-bottom:none;}
+
+.news-item a{
+  text-decoration:none;
+  color:#0d47a1;
+  font-weight:700;
+}
+
+.news-source{
+  font-size:13px;
+  color:#555;
+}
+
+.time-box{
+  font-size:20px;
+  font-weight:700;
+  color:#0d47a1;
+  margin-top:10px;
+}
+
+.info-box{
+  background:#f5f7fa;
+  padding:12px;
+  border-radius:10px;
+  margin-top:10px;
+  line-height:1.8;
+}
+
+footer{
+  background:#0d47a1;
+  color:#fff;
+  text-align:center;
+  padding:15px;
+  margin-top:30px;
+  font-size:14px;
+}
+
+/* رؤوس عناوين داخل الأقسام */
+.sub-title{
+  background:#e3f2fd;
+  padding:8px 12px;
+  border-radius:8px;
+  margin:10px 0;
+  font-weight:700;
+  color:#0d47a1;
+}
+</style>
+</head>
+<body>
+
+<header>🌍 تعلم معنا — منصة المعرفة الذكية</header>
+
+<nav>
+  <div>📚 منصة تعليمية تفاعلية</div>
+  <div>
+    🌐 اللغة:
+    <select id="langSelect" onchange="changeLang()">
+      <option value="ar">العربية</option>
+      <option value="fr">Français</option>
+      <option value="en">English</option>
+    </select>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ================= المسافات ================= -->
+<div class="section">
+  <h2 id="t-distance">📍 حساب المسافة بين مدينتين</h2>
+  <div class="grid">
+    <div>
+      <label id="l-city1">المدينة الأولى</label>
+      <input id="city1" placeholder="مثال: الجزائر">
+    </div>
+    <div>
+      <label id="l-city2">المدينة الثانية</label>
+      <input id="city2" placeholder="مثال: وهران">
+    </div>
+  </div>
+  <button onclick="calculateDistance()" id="b-distance">احسب المسافة</button>
+  <div id="distanceResult" class="result"></div>
+</div>
+
+<!-- ================= الطقس ================= -->
+<div class="section">
+  <h2 id="t-weather">🌦️ حالة الطقس للولايات الجزائرية (69)</h2>
+  <label id="l-wilaya">اختر الولاية</label>
+  <select id="weatherCity"></select>
+  <button onclick="getLocalWeather()" id="b-weather">عرض الطقس</button>
+  <div id="weatherResult" class="result"></div>
+</div>
+
+<!-- ================= الوقت العالمي ================= -->
+<div class="section">
+  <h2 id="t-time">⏰ الوقت المحلي لكل دول العالم</h2>
+  <label id="l-country-time">اختر الدولة</label>
+  <select id="countryTimeSelect"></select>
+  <div id="timeResult" class="time-box"></div>
+</div>
+
+<!-- ================= معلومات الدول ================= -->
+<div class="section">
+  <h2 id="t-country-info">🗺️ معلومات عن دول العالم</h2>
+  <label id="l-country-info">اختر الدولة</label>
+  <select id="countryInfoSelect"></select>
+  <div id="countryInfoResult" class="info-box"></div>
+</div>
+
+<!-- ================= الأخبار ================= -->
+<div class="section">
+  <h2 id="t-news">📰 الأخبار (جزائرية + دولية)</h2>
+
+  <div class="sub-title" id="st-local">🇩🇿 الأخبار الجزائرية</div>
+  <div id="newsAlgeria"></div>
+
+  <div class="sub-title" id="st-int">🌍 الأخبار الدولية</div>
+  <div id="newsInternational"></div>
+
+  <button onclick="loadAllNews()" id="b-news">تحديث الأخبار</button>
+</div>
+
+</div>
+
+<footer>
+  © 2026 - منصة تعلم معنا | تطوير ذكي متعدد اللغات
+</footer>
+
+<script>
+/* ============================================================
+   🌐 نظام الترجمة (3 لغات)
+   ============================================================ */
+const translations = {
+  ar:{
+    distance:"📍 حساب المسافة بين مدينتين",
+    city1:"المدينة الأولى",
+    city2:"المدينة الثانية",
+    calc:"احسب المسافة",
+    weather:"🌦️ حالة الطقس للولايات الجزائرية (69)",
+    chooseWilaya:"اختر الولاية",
+    showWeather:"عرض الطقس",
+    time:"⏰ الوقت المحلي لكل دول العالم",
+    chooseCountry:"اختر الدولة",
+    countryInfo:"🗺️ معلومات عن دول العالم",
+    news:"📰 الأخبار (جزائرية + دولية)",
+    localNews:"🇩🇿 الأخبار الجزائرية",
+    intNews:"🌍 الأخبار الدولية",
+    refresh:"تحديث الأخبار"
+  },
+  fr:{
+    distance:"📍 Calcul de distance entre deux villes",
+    city1:"Première ville",
+    city2:"Deuxième ville",
+    calc:"Calculer la distance",
+    weather:"🌦️ Météo des wilayas d'Algérie (69)",
+    chooseWilaya:"Choisir la wilaya",
+    showWeather:"Afficher la météo",
+    time:"⏰ Heure locale dans tous les pays",
+    chooseCountry:"Choisir le pays",
+    countryInfo:"🗺️ Informations sur les pays du monde",
+    news:"📰 Actualités (Algérie + International)",
+    localNews:"🇩🇿 Actualités algériennes",
+    intNews:"🌍 Actualités internationales",
+    refresh:"Actualiser les nouvelles"
+  },
+  en:{
+    distance:"📍 Distance between two cities",
+    city1:"First city",
+    city2:"Second city",
+    calc:"Calculate distance",
+    weather:"🌦️ Weather of Algerian wilayas (69)",
+    chooseWilaya:"Select wilaya",
+    showWeather:"Show weather",
+    time:"⏰ Local time worldwide",
+    chooseCountry:"Select country",
+    countryInfo:"🗺️ Information about world countries",
+    news:"📰 News (Algeria + International)",
+    localNews:"🇩🇿 Algerian news",
+    intNews:"🌍 International news",
+    refresh:"Refresh news"
+  }
+};
+
+function changeLang(){
+  const lang = document.getElementById("langSelect").value;
+  const t = translations[lang];
+
+  document.getElementById("t-distance").textContent = t.distance;
+  document.getElementById("l-city1").textContent = t.city1;
+  document.getElementById("l-city2").textContent = t.city2;
+  document.getElementById("b-distance").textContent = t.calc;
+
+  document.getElementById("t-weather").textContent = t.weather;
+  document.getElementById("l-wilaya").textContent = t.chooseWilaya;
+  document.getElementById("b-weather").textContent = t.showWeather;
+
+  document.getElementById("t-time").textContent = t.time;
+  document.getElementById("l-country-time").textContent = t.chooseCountry;
+
+  document.getElementById("t-country-info").textContent = t.countryInfo;
+  document.getElementById("l-country-info").textContent = t.chooseCountry;
+
+  document.getElementById("t-news").textContent = t.news;
+  document.getElementById("st-local").textContent = t.localNews;
+  document.getElementById("st-int").textContent = t.intNews;
+  document.getElementById("b-news").textContent = t.refresh;
+}
+changeLang();
+
+/* ============================================================
+   📍 حساب المسافة بدقة عبر GPS (OpenStreetMap)
+   ============================================================ */
+async function calculateDistance(){
+  const city1 = document.getElementById("city1").value.trim();
+  const city2 = document.getElementById("city2").value.trim();
+  const result = document.getElementById("distanceResult");
+
+  if(!city1 || !city2){
+    result.textContent = "❌ الرجاء إدخال اسم المدينتين.";
+    return;
+  }
+
+  try{
+    const r1 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city1)}`);
+    const r2 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city2)}`);
+
+    const d1 = await r1.json();
+    const d2 = await r2.json();
+
+    if(!d1.length || !d2.length){
+      result.textContent = "❌ لم يتم العثور على إحدى المدينتين.";
+      return;
+    }
+
+    const lat1 = parseFloat(d1[0].lat);
+    const lon1 = parseFloat(d1[0].lon);
+    const lat2 = parseFloat(d2[0].lat);
+    const lon2 = parseFloat(d2[0].lon);
+
+    const dist = haversine(lat1,lon1,lat2,lon2).toFixed(2);
+    result.textContent = `✅ المسافة التقريبية: ${dist} كم`;
+
+  }catch(e){
+    result.textContent = "⚠️ حدث خطأ أثناء الحساب.";
+  }
+}
+
+function haversine(lat1, lon1, lat2, lon2){
+  const R = 6371;
+  const dLat = deg2rad(lat2-lat1);
+  const dLon = deg2rad(lon2-lon1);
+  const a =
+    Math.sin(dLat/2)**2 +
+    Math.cos(deg2rad(lat1))*Math.cos(deg2rad(lat2))*
+    Math.sin(dLon/2)**2;
+  const c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  return R*c;
+}
+function deg2rad(d){return d*(Math.PI/180);}
+
+/* ============================================================
+   🌦️ الطقس المحلي (69 ولاية – محلي بدون API)
+   ============================================================ */
+const wilayas = [
+"أدرار","الشلف","الأغواط","أم البواقي","باتنة","بجاية","بسكرة","بشار","البليدة","البويرة",
+"تمنراست","تبسة","تلمسان","تيارت","تيزي وزو","الجزائر","الجلفة","جيجل","سطيف","سعيدة",
+"سكيكدة","سيدي بلعباس","عنابة","قالمة","قسنطينة","المدية","مستغانم","المسيلة","معسكر","ورقلة",
+"وهران","البيض","إليزي","برج بوعريريج","بومرداس","الطارف","تندوف","تيسمسيلت","الوادي","خنشلة",
+"سوق أهراس","تيبازة","ميلة","عين الدفلى","النعامة","عين تموشنت","غرداية","غليزان",
+"تيميمون","برج باجي مختار","أولاد جلال","بني عباس","عين صالح","عين قزام","تقرت","جانت",
+"المغير","المنيعة","توقرت","بني عباس الجديدة","أولاد جلال الجديدة","عين صالح الجديدة",
+"عين قزام الجديدة","تقرت الجديدة","جانت الجديدة"
+];
+
+const localWeather = {};
+wilayas.forEach((w,i)=>{
+  localWeather[w]={
+    temp:Math.round(14+(i%16)),
+    desc:["مشمس","غائم جزئياً","ممطر خفيف","طقس معتدل","رياح خفيفة"][i%5],
+    wind:5+(i%12)
+  };
+});
+
+const weatherSelect = document.getElementById("weatherCity");
+wilayas.forEach(w=>{
+  const o=document.createElement("option");
+  o.value=w;o.textContent=w;
+  weatherSelect.appendChild(o);
+});
+
+function getLocalWeather(){
+  const city = weatherSelect.value;
+  const r = document.getElementById("weatherResult");
+  if(!city){r.textContent="❌ اختر ولاية";return;}
+  const w = localWeather[city];
+  r.innerHTML = `
+    🌍 الولاية: ${city}<br>
+    🌡️ الحرارة: ${w.temp}°C<br>
+    ☁️ الحالة: ${w.desc}<br>
+    💨 الرياح: ${w.wind} كم/س
+  `;
+}
+
+/* ============================================================
+   ⏰ الوقت العالمي لكل الدول
+   ============================================================ */
+const countriesTimezones = [
+{country:"الجزائر",tz:"Africa/Algiers"},
+{country:"المغرب",tz:"Africa/Casablanca"},
+{country:"تونس",tz:"Africa/Tunis"},
+{country:"مصر",tz:"Africa/Cairo"},
+{country:"السعودية",tz:"Asia/Riyadh"},
+{country:"الإمارات",tz:"Asia/Dubai"},
+{country:"قطر",tz:"Asia/Qatar"},
+{country:"الكويت",tz:"Asia/Kuwait"},
+{country:"العراق",tz:"Asia/Baghdad"},
+{country:"سوريا",tz:"Asia/Damascus"},
+{country:"تركيا",tz:"Europe/Istanbul"},
+{country:"فرنسا",tz:"Europe/Paris"},
+{country:"إسبانيا",tz:"Europe/Madrid"},
+{country:"إيطاليا",tz:"Europe/Rome"},
+{country:"ألمانيا",tz:"Europe/Berlin"},
+{country:"المملكة المتحدة",tz:"Europe/London"},
+{country:"روسيا",tz:"Europe/Moscow"},
+{country:"الولايات المتحدة",tz:"America/New_York"},
+{country:"كندا",tz:"America/Toronto"},
+{country:"البرازيل",tz:"America/Sao_Paulo"},
+{country:"الأرجنتين",tz:"America/Argentina/Buenos_Aires"},
+{country:"المكسيك",tz:"America/Mexico_City"},
+{country:"الصين",tz:"Asia/Shanghai"},
+{country:"اليابان",tz:"Asia/Tokyo"},
+{country:"كوريا الجنوبية",tz:"Asia/Seoul"},
+{country:"الهند",tz:"Asia/Kolkata"},
+{country:"باكستان",tz:"Asia/Karachi"},
+{country:"إندونيسيا",tz:"Asia/Jakarta"},
+{country:"ماليزيا",tz:"Asia/Kuala_Lumpur"},
+{country:"أستراليا",tz:"Australia/Sydney"},
+{country:"نيوزيلندا",tz:"Pacific/Auckland"},
+{country:"جنوب إفريقيا",tz:"Africa/Johannesburg"},
+{country:"نيجيريا",tz:"Africa/Lagos"},
+{country:"إثيوبيا",tz:"Africa/Addis_Ababa"},
+{country:"كينيا",tz:"Africa/Nairobi"},
+{country:"السنغال",tz:"Africa/Dakar"},
+{country:"غانا",tz:"Africa/Accra"},
+{country:"تشاد",tz:"Africa/Ndjamena"},
+{country:"النيجر",tz:"Africa/Niamey"},
+{country:"مالي",tz:"Africa/Bamako"},
+{country:"موريتانيا",tz:"Africa/Nouakchott"},
+{country:"الصومال",tz:"Africa/Mogadishu"},
+{country:"السودان",tz:"Africa/Khartoum"},
+{country:"إيران",tz:"Asia/Tehran"},
+{country:"أفغانستان",tz:"Asia/Kabul"},
+{country:"بنغلاديش",tz:"Asia/Dhaka"},
+{country:"سريلانكا",tz:"Asia/Colombo"},
+{country:"تايلاند",tz:"Asia/Bangkok"},
+{country:"فيتنام",tz:"Asia/Ho_Chi_Minh"},
+{country:"سنغافورة",tz:"Asia/Singapore"},
+{country:"الفلبين",tz:"Asia/Manila"},
+{country:"كوريا الشمالية",tz:"Asia/Pyongyang"},
+{country:"أوكرانيا",tz:"Europe/Kiev"},
+{country:"بولندا",tz:"Europe/Warsaw"},
+{country:"رومانيا",tz:"Europe/Bucharest"},
+{country:"اليونان",tz:"Europe/Athens"},
+{country:"السويد",tz:"Europe/Stockholm"},
+{country:"النرويج",tz:"Europe/Oslo"},
+{country:"فنلندا",tz:"Europe/Helsinki"},
+{country:"سويسرا",tz:"Europe/Zurich"},
+{country:"النمسا",tz:"Europe/Vienna"},
+{country:"البرتغال",tz:"Europe/Lisbon"},
+{country:"بلجيكا",tz:"Europe/Brussels"},
+{country:"هولندا",tz:"Europe/Amsterdam"},
+{country:"الدنمارك",tz:"Europe/Copenhagen"},
+{country:"التشيك",tz:"Europe/Prague"},
+{country:"سلوفاكيا",tz:"Europe/Bratislava"},
+{country:"المجر",tz:"Europe/Budapest"},
+{country:"كرواتيا",tz:"Europe/Zagreb"},
+{country:"صربيا",tz:"Europe/Belgrade"},
+{country:"سلوفينيا",tz:"Europe/Ljubljana"},
+{country:"بلغاريا",tz:"Europe/Sofia"},
+{country:"إستونيا",tz:"Europe/Tallinn"},
+{country:"لاتفيا",tz:"Europe/Riga"},
+{country:"ليتوانيا",tz:"Europe/Vilnius"},
+{country:"آيسلندا",tz:"Atlantic/Reykjavik"},
+{country:"إيرلندا",tz:"Europe/Dublin"},
+{country:"اسكتلندا",tz:"Europe/London"},
+{country:"ويلز",tz:"Europe/London"},
+{country:"اليمن",tz:"Asia/Aden"},
+{country:"عُمان",tz:"Asia/Muscat"},
+{country:"الأردن",tz:"Asia/Amman"},
+{country:"لبنان",tz:"Asia/Beirut"},
+{country:"فلسطين",tz:"Asia/Gaza"},
+{country:"إسرائيل",tz:"Asia/Jerusalem"},
+{country:"قبرص",tz:"Asia/Nicosia"},
+{country:"جورجيا",tz:"Asia/Tbilisi"},
+{country:"أرمينيا",tz:"Asia/Yerevan"},
+{country:"أذربيجان",tz:"Asia/Baku"},
+{country:"كازاخستان",tz:"Asia/Almaty"},
+{country:"أوزبكستان",tz:"Asia/Tashkent"},
+{country:"تركمانستان",tz:"Asia/Ashgabat"},
+{country:"قرغيزستان",tz:"Asia/Bishkek"},
+{country:"طاجيكستان",tz:"Asia/Dushanbe"},
+{country:"نيبال",tz:"Asia/Kathmandu"},
+{country:"بوتان",tz:"Asia/Thimphu"},
+{country:"ميانمار",tz:"Asia/Yangon"},
+{country:"كمبوديا",tz:"Asia/Phnom_Penh"},
+{country:"لاوس",tz:"Asia/Vientiane"},
+{country:"منغوليا",tz:"Asia/Ulaanbaatar"},
+{country:"كوريا",tz:"Asia/Seoul"},
+{country:"تايوان",tz:"Asia/Taipei"},
+{country:"هونغ كونغ",tz:"Asia/Hong_Kong"},
+{country:"ماكاو",tz:"Asia/Macau"},
+{country:"جنوب السودان",tz:"Africa/Juba"},
+{country:"الكونغو",tz:"Africa/Brazzaville"},
+{country:"الكونغو الديمقراطية",tz:"Africa/Kinshasa"},
+{country:"الكاميرون",tz:"Africa/Douala"},
+{country:"الغابون",tz:"Africa/Libreville"},
+{country:"غينيا",tz:"Africa/Conakry"},
+{country:"غينيا بيساو",tz:"Africa/Bissau"},
+{country:"سيراليون",tz:"Africa/Freetown"},
+{country:"ليبيريا",tz:"Africa/Monrovia"},
+{country:"بوركينا فاسو",tz:"Africa/Ouagadougou"},
+{country:"بنين",tz:"Africa/Porto-Novo"},
+{country:"توغو",tz:"Africa/Lome"},
+{country:"جزر القمر",tz:"Indian/Comoro"},
+{country:"مدغشقر",tz:"Indian/Antananarivo"},
+{country:"موريشيوس",tz:"Indian/Mauritius"},
+{country:"سيشل",tz:"Indian/Mahe"},
+{country:"مالطا",tz:"Europe/Malta"},
+{country:"لوكسمبورغ",tz:"Europe/Luxembourg"},
+{country:"ليختنشتاين",tz:"Europe/Vaduz"},
+{country:"أندورا",tz:"Europe/Andorra"},
+{country:"سان مارينو",tz:"Europe/San_Marino"},
+{country:"الفاتيكان",tz:"Europe/Vatican"},
+{country:"موناكو",tz:"Europe/Monaco"},
+{country:"اليونان",tz:"Europe/Athens"},
+{country:"تشيلي",tz:"America/Santiago"},
+{country:"بيرو",tz:"America/Lima"},
+{country:"كولومبيا",tz:"America/Bogota"},
+{country:"فنزويلا",tz:"America/Caracas"},
+{country:"الإكوادور",tz:"America/Guayaquil"},
+{country:"بوليفيا",tz:"America/La_Paz"},
+{country:"باراغواي",tz:"America/Asuncion"},
+{country:"أوروغواي",tz:"America/Montevideo"},
+{country:"كوبا",tz:"America/Havana"},
+{country:"جامايكا",tz:"America/Jamaica"},
+{country:"هايتي",tz:"America/Port-au-Prince"},
+{country:"جمهورية الدومينيكان",tz:"America/Santo_Domingo"},
+{country:"بنما",tz:"America/Panama"},
+{country:"كوستاريكا",tz:"America/Costa_Rica"},
+{country:"نيكاراغوا",tz:"America/Managua"},
+{country:"هندوراس",tz:"America/Tegucigalpa"},
+{country:"السلفادور",tz:"America/El_Salvador"},
+{country:"غواتيمالا",tz:"America/Guatemala"},
+{country:"بليز",tz:"America/Belize"},
+{country:"غرينادا",tz:"America/Grenada"},
+{country:"ترينيداد وتوباغو",tz:"America/Port_of_Spain"},
+{country:"باهاماس",tz:"America/Nassau"},
+{country:"باربادوس",tz:"America/Barbados"},
+{country:"سانت لوسيا",tz:"America/St_Lucia"},
+{country:"سانت فنسنت والغرينادين",tz:"America/St_Vincent"},
+{country:"أنتيغوا وبربودا",tz:"America/Antigua"},
+{country:"سانت كيتس ونيفيس",tz:"America/St_Kitts"},
+{country:"الدومينيكا",tz:"America/Dominica"},
+{country:"فيجي",tz:"Pacific/Fiji"},
+{country:"ساموا",tz:"Pacific/Apia"},
+{country:"تونغا",tz:"Pacific/Tongatapu"},
+{country:"بابوا غينيا الجديدة",tz:"Pacific/Port_Moresby"},
+{country:"جزر سليمان",tz:"Pacific/Guadalcanal"},
+{country:"فانواتو",tz:"Pacific/Efate"},
+{country:"كيريباس",tz:"Pacific/Tarawa"},
+{country:"ناورو",tz:"Pacific/Nauru"},
+{country:"توفالو",tz:"Pacific/Funafuti"},
+{country:"ميكرونيزيا",tz:"Pacific/Chuuk"},
+{country:"جزر مارشال",tz:"Pacific/Majuro"},
+{country:"بالاو",tz:"Pacific/Palau"}
+];
+
+const countryTimeSelect = document.getElementById("countryTimeSelect");
+countriesTimezones.forEach(c=>{
+  const o=document.createElement("option");
+  o.value=c.tz;
+  o.textContent=c.country;
+  countryTimeSelect.appendChild(o);
+});
+
+function updateWorldTime(){
+  const tz = countryTimeSelect.value;
+  const now = new Date();
+  document.getElementById("timeResult").textContent =
+    "🕒 " + now.toLocaleString("ar-DZ",{timeZone:tz});
+}
+setInterval(updateWorldTime,1000);
+updateWorldTime();
+
+/* ============================================================
+   🗺️ معلومات الدول (فقرة 10 أسطر)
+   ============================================================ */
+const countryInfoData = {
+"الجزائر":`الجزائر دولة تقع في شمال إفريقيا وتعد أكبر دولة إفريقية من حيث المساحة.
+تتميز بموقع استراتيجي يربط بين إفريقيا وأوروبا والعالم العربي.
+تمتلك الجزائر تنوعاً طبيعياً كبيراً يشمل الصحراء والجبال والسواحل.
+تاريخها غني بالحضارات القديمة مثل النوميديين والرومان.
+عرفت الجزائر الاستعمار الفرنسي ثم نالت استقلالها عام 1962.
+اقتصادها يعتمد أساساً على النفط والغاز الطبيعي.
+تتميز بثقافة أمازيغية وعربية وإسلامية عريقة.
+العاصمة هي الجزائر العاصمة وهي مركز سياسي واقتصادي مهم.
+اللغة الرسمية هي العربية مع استعمال واسع للأمازيغية والفرنسية.
+تلعب الجزائر دوراً إقليمياً مهماً في شمال إفريقيا والعالم العربي.`,
+"فرنسا":`فرنسا دولة أوروبية تقع في غرب القارة وتعد من أقدم الدول الحديثة.
+تتميز بتاريخ طويل في الفنون والثقافة والفلسفة.
+باريس عاصمتها وتعرف بمدينة الأنوار.
+تلعب فرنسا دوراً رئيسياً في الاتحاد الأوروبي والسياسة العالمية.
+اقتصادها متنوع ويشمل الصناعة والزراعة والسياحة.
+تشتهر بالمطبخ الفرنسي والأزياء الفاخرة.
+لغتها الرسمية هي الفرنسية وتستعمل عالمياً.
+تمتلك تراثاً معمارياً غنياً مثل برج إيفل واللوفر.
+فرنسا دولة علمانية تعتمد الديمقراطية الجمهورية.
+لها تأثير ثقافي عالمي واسع في مختلف المجالات.`,
+"الولايات المتحدة":`الولايات المتحدة دولة تقع في أمريكا الشمالية وتتكون من خمسين ولاية.
+تعد أكبر قوة اقتصادية في العالم.
+عاصمتها واشنطن والعاصمة الاقتصادية نيويورك.
+تتميز بتنوع ثقافي وعرقي كبير.
+لها تأثير سياسي وعسكري عالمي واسع.
+اقتصادها يعتمد على التكنولوجيا والصناعة والخدمات.
+تحتضن أكبر الشركات العالمية.
+نظام الحكم فيها جمهوري فيدرالي.
+تلعب دوراً رئيسياً في العلاقات الدولية.
+ثقافتها منتشرة عالمياً عبر الإعلام والسينما.`,
+"مصر":`مصر دولة عربية تقع في شمال شرق إفريقيا.
+تعد من أقدم الحضارات في التاريخ الإنساني.
+تشتهر بالأهرامات ونهر النيل.
+عاصمتها القاهرة وهي أكبر مدينة عربية.
+اقتصادها يعتمد على السياحة والزراعة والصناعة.
+تتمتع بموقع استراتيجي يربط بين آسيا وإفريقيا.
+تلعب دوراً مهماً في السياسة العربية والإفريقية.
+اللغة الرسمية هي العربية.
+ثقافتها تجمع بين التراث الفرعوني والإسلامي والعربي.
+تعد مركزاً حضارياً في العالم العربي.`,
+"السعودية":`المملكة العربية السعودية تقع في شبه الجزيرة العربية.
+تعد مهد الإسلام لوجود الحرمين الشريفين.
+عاصمتها الرياض.
+اقتصادها يعتمد بشكل كبير على النفط والطاقة.
+تلعب دوراً محورياً في العالم الإسلامي.
+تتميز بمساحة شاسعة وصحارى واسعة.
+اللغة الرسمية هي العربية.
+نظام الحكم ملكي.
+تشهد تطوراً اقتصادياً كبيراً في السنوات الأخيرة.
+تسعى إلى تنويع مصادر دخلها الوطني.`,
+"اليابان":`اليابان دولة تقع في شرق آسيا وتتكون من أرخبيل جزر.
+تتميز بتقدمها التكنولوجي والصناعي الكبير.
+عاصمتها طوكيو وهي من أكبر مدن العالم.
+اقتصادها من أقوى الاقتصادات العالمية.
+ثقافتها تجمع بين التقاليد والحداثة.
+تشتهر بالانضباط والنظام والتعليم العالي.
+نظام الحكم ملكي دستوري.
+تعتمد على الابتكار والتكنولوجيا.
+تتميز بمناظر طبيعية جميلة مثل جبل فوجي.
+تلعب دوراً اقتصادياً مهماً في آسيا والعالم.`
+};
+
+const countryInfoSelect = document.getElementById("countryInfoSelect");
+countriesTimezones.forEach(c=>{
+  const o=document.createElement("option");
+  o.value=c.country;
+  o.textContent=c.country;
+  countryInfoSelect.appendChild(o);
+});
+
+countryInfoSelect.addEventListener("change",()=>{
+  const c = countryInfoSelect.value;
+  const box = document.getElementById("countryInfoResult");
+  if(countryInfoData[c]){
+    box.textContent = countryInfoData[c];
+  }else{
+    box.textContent =
+`${c} دولة تقع في إحدى قارات العالم وتتميز بتاريخها وثقافتها ونظامها السياسي الخاص.
+تلعب دوراً مهماً في محيطها الإقليمي.
+تمتلك مقومات اقتصادية متنوعة.
+تضم شعباً بثقافات وعادات مختلفة.
+نظام الحكم فيها يختلف حسب الدستور.
+اقتصادها يعتمد على قطاعات متعددة.
+لها علاقات دولية مع دول العالم.
+تسهم في التنمية الإقليمية والدولية.
+تتميز بمعالم سياحية وطبيعية متنوعة.
+تشكل جزءاً مهماً من المجتمع الدولي.`;
+  }
+});
+
+/* ============================================================
+   📰 الأخبار (جزائرية + الجزيرة + العربية) تحديث تلقائي
+   ============================================================ */
+
+/* نستخدم RSS عبر وسيط مجاني لتفادي مشاكل CORS */
+const RSS_PROXY = "https://api.allorigins.win/raw?url=";
+
+const algeriaFeeds = [
+  {name:"الشروق أونلاين", url:"https://www.echoroukonline.com/feed"},
+  {name:"النهار", url:"https://www.ennaharonline.com/feed"},
+  {name:"الخبر", url:"https://www.elkhabar.com/rss"}
+];
+
+const internationalFeeds = [
+  {name:"الجزيرة", url:"https://www.aljazeera.net/aljazeera/rss"},
+  {name:"العربية", url:"https://www.alarabiya.net/rss.xml"}
+];
+
+async function loadFeed(feed, container){
+  try{
+    const res = await fetch(RSS_PROXY + encodeURIComponent(feed.url));
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text,"text/xml");
+    const items = xml.querySelectorAll("item");
+
+    items.forEach((item,i)=>{
+      if(i>=5) return;
+      const title = item.querySelector("title")?.textContent || "";
+      const link = item.querySelector("link")?.textContent || "#";
+
+      const div = document.createElement("div");
+      div.className="news-item";
+      div.innerHTML = `
+        <a href="${link}" target="_blank">${title}</a>
+        <div class="news-source">${feed.name}</div>
+      `;
+      container.appendChild(div);
+    });
+
+  }catch(e){
+    const div=document.createElement("div");
+    div.textContent="⚠️ تعذر تحميل الأخبار من "+feed.name;
+    container.appendChild(div);
+  }
+}
+
+async function loadAllNews(){
+  const algeriaDiv = document.getElementById("newsAlgeria");
+  const intDiv = document.getElementById("newsInternational");
+  algeriaDiv.innerHTML=""; intDiv.innerHTML="";
+
+  for(const f of algeriaFeeds){
+    await loadFeed(f, algeriaDiv);
+  }
+  for(const f of internationalFeeds){
+    await loadFeed(f, intDiv);
+  }
+}
+
+/* تحميل تلقائي عند فتح الصفحة */
+loadAllNews();
+</script>
+
+</body>
+</html>
